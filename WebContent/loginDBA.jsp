@@ -499,7 +499,7 @@ footer#main {
 
 <body>
 	<div>
-		<form class="box login" action="loginServlet" method="post">
+		<form class="box login" action="loginServletDBA" method="post">
 			<fieldset class="boxBody">
 				<label>Username</label> <input type="text" name="user" tabindex="1"
 					required> <label><a href="#" class="rLink"
@@ -517,7 +517,7 @@ footer#main {
 		</form>
 	</div>
 	<div style="margin-top:500px" align="center">
-		<h3><a href="loginDBA.jsp">Not a user? DBA Login</a></h3>
+		<h3><a href="login.jsp">Not a DBA? Customer Login</a></h3>
 	</div>
 
 </body>

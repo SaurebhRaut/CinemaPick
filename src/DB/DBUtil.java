@@ -11,14 +11,14 @@ import javax.naming.Context;
 
 public class DBUtil {
 
-	/*	public Connection getConnectionObj() {
+		public Connection getCon() {
 		// JDBC driver name and database URL
 		final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
-		final String DB_URL = "jdbc:mysql://localhost:3306/moviedb";
+		final String DB_URL = "jdbc:mysql://localhost:3306/moviedb_test";
 
 		// Database credentials
 		final String USER = "root";
-		final String PASS = "user";
+		final String PASS = "Wednesday@1";
 		Connection connect = null;
 
 		try {
@@ -29,7 +29,7 @@ public class DBUtil {
 			e.printStackTrace();
 		}
 		return connect;
-	}*/
+	}
 
 	public Connection getConnectionObj() {
 		/*	String loginUser = "user";
@@ -60,6 +60,25 @@ public class DBUtil {
 			E.printStackTrace();
 		}
 		return dbcon;
+	}
+
+	public static Connection getconnection(String user, String pass) {
+		final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
+		final String DB_URL = "jdbc:mysql://localhost:3306";
+
+		// Database credentials
+//		final String USER = "root";
+//		final String PASS = "user";
+		Connection connect = null;
+
+		try {
+			Class.forName(JDBC_DRIVER).newInstance();
+			// System.out.println("Connecting to database...");
+			connect = DriverManager.getConnection(DB_URL, user, pass);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return connect;
 	}
 
 	

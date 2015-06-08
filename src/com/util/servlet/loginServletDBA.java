@@ -1,7 +1,6 @@
 package com.util.servlet;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.sql.SQLException;
 
 import javax.servlet.RequestDispatcher;
@@ -13,20 +12,19 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import BO.customer;
-import DB.DBUtil;
 import DB.dbOperations;
 
 /**
- * Servlet implementation class loginServlet
+ * Servlet implementation class loginServletDBA
  */
-@WebServlet("/loginServlet")
-public class loginServlet extends HttpServlet {
+@WebServlet("/loginServletDBA")
+public class loginServletDBA extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	/**
 	 * @see HttpServlet#HttpServlet()
 	 */
-	public loginServlet() {
+	public loginServletDBA() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
@@ -42,23 +40,26 @@ public class loginServlet extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-
 		String user = request.getParameter("user");
 		String pwd = request.getParameter("pwd");
 		try {
-			customer cust = new dbOperations().authentica(user, pwd);
-			if( cust != null){
-				Cookie loginCookie = new Cookie("user",cust.first_name);
-				Cookie idCookie = new Cookie("id", Integer.toString(cust.id));
+			boolean flag = new dbOperations().authenticaDBA(user, pwd);
+			if(flag){
+				Cookie loginCookie = new Cookie("user",user);
+				Cookie loginCookiePassword = new Cookie("pwd",pwd);
 				//setting cookie to expiry in 30 mins
 				loginCookie.setMaxAge(30*60);
-				idCookie.setMaxAge(30*60);
-				response.addCookie(idCookie);
-				response.addCookie(loginCookie);				
-				response.sendRedirect("search.jsp");
+				response.addCookie(loginCookie);
+				loginCookiePassword.setMaxAge(30*60);
+				response.addCookie(loginCookiePassword);
+				if(user.equals("root")){
+					response.sendRedirect("displayMetaData.jsp");
+				}
+				else{
+					response.sendRedirect("homeUser.jsp");
+				}
 			}else{
-				RequestDispatcher rd = getServletContext().getRequestDispatcher("/login.jsp");
+				RequestDispatcher rd = getServletContext().getRequestDispatcher("/loginDBA.jsp");
 				String msg = "Either user name or password is wrong!";
 				request.setAttribute("msg", msg);
 				rd.include(request, response);

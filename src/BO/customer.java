@@ -20,5 +20,15 @@ public class customer {
 	{
 		
 	}
+	
+	public customer(int id, String fname, String lname, String cid, String add, String email)
+	{
+		this.id = id;
+		this.first_name = fname;
+		this.last_name = lname;
+		this.cc_id = cid;
+		this.address = add;
+		this.email = email;
+	}
 }
 

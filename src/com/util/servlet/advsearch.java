@@ -54,9 +54,13 @@ public class advsearch extends HttpServlet {
 		if (!title.isEmpty()) {
 			if (firstParam) {
 				query.append(" title like '%" + title + "%'");
+				query.append("OR levenshtein('"+title+"',title)<=3");
 				firstParam = false;
 			} else
+			{
 				query.append(" AND title like '%" + title + "%'");
+				query.append("OR levenshtein('"+title+"',title)<=3)");
+			}
 		}
 		if (!year.isEmpty()) {
 			if (firstParam) {
@@ -68,9 +72,13 @@ public class advsearch extends HttpServlet {
 		if (!director.isEmpty()) {
 			if (firstParam) {
 				query.append(" director like '%" + director + "%'");
+				query.append("OR levenshtein('"+director+"',director)<=3");
 				firstParam = false;
 			} else
-				query.append(" AND director like '%" + director + "%'");
+			{
+				query.append(" AND (director like '%" + director + "%'");
+				query.append("OR levenshtein('"+director+"',director)<=3)");
+			}
 		}
 
 		try {

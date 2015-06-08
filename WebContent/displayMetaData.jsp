@@ -1,61 +1,128 @@
-<%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ page import="java.util.*"%>
-<%@ page import="java.io.*"%>
-<%@ page import="java.sql.*"%>
-
+<%@page import="DB.dbOperations"%>
+<%@page import="BO.MetaData"%>
+<%@page import="java.util.*"%>
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+	pageEncoding="ISO-8859-1"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<%@ page import="DB.DBUtil"%>
-<title>Insert title here</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet"
+	href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script
+	src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+<title>Display Meta Data</title>
 </head>
 <body>
-
-	<div id="nav">
-		<a href="Menu.jsp">HOME</a>
-		<a href="Login.jsp">Logout</a>
+	<nav class="navbar navbar-inverse">
+	<div class="container-fluid">
+		<div>
+			<ul class="nav navbar-nav navbar-right">
+			<li><a href="displayMetaData.jsp"><span
+						class="glyphicon glyphicon-home"></span> Home</a></li>
+				<li><a href="displayDetails.jsp"><span
+						class="glyphicon glyphicon-user"></span> Show Users</a></li>				
+				<li><a href="loginDBA.jsp"><span
+						class="glyphicon glyphicon-log-in"></span> Logout</a></li>
+			</ul>
+		</div>
 	</div>
-	<%
-		try {
-			DBUtil db = new DBUtil();
-			Connection con = db.getconnection();
-			ArrayList<String> listOfTables = new ArrayList<String>();
-			out.println("<table align=center>");
+	</nav>
+	<div align="right" style="padding:20px">
+		<form action = "genReports" method = "post" style="
+    float: left;
+    margin-left: 70%;
+">
+			<input type="submit" value = "Generate Reports" class="btn btn-primary">			
+		</form>
+		<a href="addmovies.jsp"><input type="button" value = "Add Movie" class="btn btn-primary" style="
+    margin-right: 10%;
+    padding: 5px;
+"></a>
+	</div>
+	<h3 align="center"><B><I>Meta-Data</I></B></h3>
+	
+		<script type="text/javascript">
 
-			// Create an execute an SQL statement to select all of table"Stars" records
-			Statement select = con.createStatement();
-			ResultSet rs = select.executeQuery("show tables");
-
-			while (rs.next()) {
-				listOfTables.add(rs.getString("Tables_in_moviedb"));
+			function chh() {
+				var firstDropdown = document.getElementById("colDropDown");
+				var firstValue = firstDropdown.options[firstDropdown.selectedIndex].value;
+				/* var colVal = document.getElementById("col");
+				colVal.value = firstValue; */
+				window.location.assign("displayMetaData.jsp?dbselect=" + firstValue);
 			}
-			ResultSetMetaData metadata;
-			for (String a : listOfTables) {
-				rs = select.executeQuery("select * from " + a);
-				metadata = rs.getMetaData();
+		</script>
+	
+	<div style="margin-top: 50px; width: 300px; margin-left: 520px">
+		
+		<select id="colDropDown" onchange="chh();" style="margin-left: 25%;margin-bottom: 20px;">
+					<option value="NONE">Select Database</option>
+					<%
+						dbOperations dbObj = new dbOperations();
+						ArrayList<String> cust = dbObj.getAllDatabases();
+							for (int i = 0; i < cust.size(); i++) {
+					%>
+					<option value="<%=cust.get(i)%>"><%=cust.get(i)%></option>
+					<%
+						}
+					%>
+		</select>
+		
+	
+		<%
+			String database = request.getParameter("dbselect");
+			if(database== null || database == "")
+			{
+				%>
+				<h4 style="
+    margin-left: 22%;
+">Please make a selection.</h4>
+				
+				<%
+			}
+			else
+			{
+		%>
+		<table align="center" class="table table-striped">
+			<%
+				MetaData metaObj = new MetaData();
+				metaObj = dbObj.iGiveMetaData(database);
+				if (metaObj != null) {
+					for (Map.Entry<String, ArrayList<String>> entry : metaObj.metaData
+							.entrySet()) {
+			%>
+			<tr>
+				<%
+					String tableName = entry.getKey();
+				%>
 
-				out.println("<tr>");
-				out.println("<td align=center><b><i>" + a + "</i></b></td>");
-				out.println("</tr>");
-				//out.println("<td>" + metadata.getColumnCount() + "</td>");
-				//out.println("<td>");
-				for (int i = 1; i <= metadata.getColumnCount(); i++) {
-					out.println("<tr>");
-					out.println("<td>" + metadata.getColumnName(i)
-							+ "</td>");
-					out.println("<td>" + metadata.getColumnTypeName(i)
-							+ "</td>");
-					out.println("</tr>");
+				<td colspan="2" align="center"><B><I><%=tableName%></I> </B>
+				</td>
 
+			</tr>
+			<%
+				ArrayList<String> valueList = entry.getValue();
+						for (int j = 0; j < valueList.size() - 1; j++) {
+			%>
+			<tr>
+				<td><%=valueList.get(j)%></td>
+				<td><%=valueList.get(j + 1)%></td>
+				<%
+					j = j + 1;
+				%>
+				<%-- 				<%j+1; %> --%>
+			</tr>
+			<%
 				}
-				out.println("<tr>");
-				out.println("</tr>");
-
+					}
+				}
 			}
-		} catch (Exception e) {
-			out.println(e.toString());
-		}
-	%>
+			%>
+
+		</table>
+	</div>
 </body>
 </html>
