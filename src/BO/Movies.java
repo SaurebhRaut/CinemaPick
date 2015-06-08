@@ -13,6 +13,11 @@ public class Movies
 		
 	}
 	
+	public Movies(int id,String title) {
+		this.id=id;
+		this.title=title;
+	}
+	
 	public Movies(int id, String title, int year, String director, String banner_url, String trailer_url)
 	{
 		this.id = id;

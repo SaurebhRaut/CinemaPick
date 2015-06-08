@@ -32,6 +32,42 @@ form.sortBut {
 <script
 	src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
 <title>Display Movies</title>
+<link type="text/css" rel="stylesheet" href="css/jquery.qtip.min.css" />
+<script type="text/javascript" src="js/jquery-1.10.2.min.js"></script>
+<script type="text/javascript" src="js/jquery.min.js"></script>
+<script type="text/javascript" src="js/jquery.qtip.min.js"></script>
+<script type="text/javascript" src="js/jquery.qtip.js"></script>
+<!-- <script type="text/javascript" src="js/jquery.qtip.min.js.map"></script> -->
+<script type="text/javascript" src="js/images.loaded.pkg.min.js"></script>
+<style type="text/css">
+.qtip-wiki {
+	max-width: 400px;
+}
+
+.qtip-wiki p {
+	margin: 0 0 6px;
+	font-size: 13.5px;
+}
+
+.qtip-wiki h1 {
+	font-size: 15px;
+	line-height: 1.1;
+	margin: 0 0 5px;
+}
+
+.qtip-wiki img {
+	float: left;
+	margin: 10px 10px 10px 0;
+}
+
+.qtip-wiki .info {
+	overflow: hidden;
+}
+
+.qtip-wiki p.note {
+	font-weight: 700;
+}
+</style>
 </head>
 <body>
 	<nav class="navbar navbar-inverse">
@@ -139,7 +175,7 @@ form.sortBut {
 					count++;
 				}
 	%>
-	<div id=search_div class="container" style="width:" 400px>
+	<div id=search_div class="container">
 		<table align=center class="table table-striped">
 			<thead>
 				<tr>
@@ -159,9 +195,10 @@ form.sortBut {
 						while (currmovieentry != null) {
 							out.println("<tr>");
 							// 						out.println("<td>" + currmovieentry.id + "</td>");
-							out.println("<td><a href=SingleMovie.jsp?movieID="
+							/* out.println("<td><a href=SingleMovie.jsp?movieID="
 									+ currmovieentry.id + ">"
-									+ currmovieentry.title + "</a></td>");
+									+ currmovieentry.title + "</a></td>"); */
+							out.println("<td><label class = iamTool id = toolTip.jsp?movie=" + currmovieentry.id + ">"+ "<a href=SingleMovie.jsp?movieID="+currmovieentry.id+">"+currmovieentry.title+"</a></label></td>");
 							out.println("<td>" + currmovieentry.year + "</td>");
 							out.println("<td>" + currmovieentry.director + "</td>");
 							out.println("<td>");
@@ -265,5 +302,37 @@ form.sortBut {
 		}
 	%>
 
+	<script type="text/javascript">
+		//Create the tooltips only when document ready
+		$(document).ready(function() {
+			// MAKE SURE YOUR SELECTOR MATCHES SOMETHING IN YOUR HTML!!!
+			$('.iamTool').each(function() {
+				$(this).qtip({
+					content : {
+						text : function(event, api) {
+							$.ajax({
+								cache : false,
+								async : true,
+								url : api.elements.target.attr('id')
+							// Use href attribute as URL
+							}).then(function(content) {
+								// Set the tooltip content upon successful retrieval
+								api.set('content.text', content);
+							}, function(xhr, status, error) {
+								// Upon failure... set the tooltip content to error
+								api.set('content.text', status + ': ' + error);
+							});
+
+							return 'Loading...'; // Set some initial text
+						}
+					},
+					position : {
+						viewport : $(window)
+					},
+					style : 'qtip-wiki'
+				});
+			});
+		});
+	</script>
 </body>
 </html>

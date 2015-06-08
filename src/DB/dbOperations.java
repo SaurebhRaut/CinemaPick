@@ -684,6 +684,7 @@ public class dbOperations {
 
 	}
 
+	
 	public boolean insertToCart(int movie_id, int cust_id) throws SQLException
 	{
 		Connection conObj = new DBUtil().getConnectionObj();
@@ -1145,5 +1146,20 @@ public class dbOperations {
 			dbList.add(rs.getString(1));
 		}
 		return dbList;
+	}
+	
+	public List<Movies> getMoviesBySearchQueryajax(String query)
+	throws SQLException {
+		Connection conObj = new DBUtil().getConnectionObj();
+		Statement st = conObj.createStatement();
+		ResultSet rs = st.executeQuery(query);
+		List<Movies> movieList = new ArrayList<Movies>();
+		while (rs.next()) {
+			movieList.add(new Movies(rs.getInt(1),rs.getString(2)));
+		}
+		st.close();
+		rs.close();
+		conObj.close();
+		return movieList;
 	}
 }
